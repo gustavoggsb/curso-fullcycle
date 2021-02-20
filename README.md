@@ -1,5 +1,5 @@
 
-# Full Cycle Development
+# Curso Full Cycle 2.0
 
 
 ## Sobre o treinamento
