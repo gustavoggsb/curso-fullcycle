@@ -1,0 +1,51 @@
+version: '3'
+
+services:
+  nginx:
+    build:
+      context: ./nginx
+    image: nginx:latest
+    container_name: nginx
+    networks:
+      - fc-network
+    ports:
+      - "8080:80"
+    depends_on:
+      - node
+
+  node:
+    container_name: node
+    restart: always
+    build:
+      context: ./node
+    image: node:12
+    tty: true
+    entrypoint: dockerize -wait tcp://db:3306 -timeout 30s docker-entrypoint.sh
+    networks:
+      - fc-network
+    depends_on:
+      - db
+    command: npm start
+
+  db:
+    build:
+      context: ./mysql
+    image: mysql:5.7
+    container_name: db
+    restart: always
+    tty: true
+    volumes:
+      - ./mysql/database:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=nodedb
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=root
+    networks:
+      - fc-network
+    command: --innodb-use-native-aio=0
+
+
+networks:
+  fc-network:
+    name: fc-network
+    driver: bridge
