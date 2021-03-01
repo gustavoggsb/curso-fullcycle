@@ -47,5 +47,4 @@ services:
 
 networks:
   fc-network:
-    name: fc-network
     driver: bridge
